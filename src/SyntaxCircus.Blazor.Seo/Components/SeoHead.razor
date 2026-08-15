@@ -1,0 +1,62 @@
+@namespace SyntaxCircus.Blazor.Seo.Components
+@inject IOptions<SeoOptions> SeoOptionsAccessor
+@inject ISeoUrlBuilder UrlBuilder
+
+<HeadContent>
+    <meta name="description" content="@EffectiveDescription" />
+    <link rel="canonical" href="@CanonicalUrl" />
+    @if (NoIndex)
+    {
+        <meta name="robots" content="noindex, nofollow" />
+    }
+    else
+    {
+        <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
+    }
+
+    <meta property="og:type" content="@OgType" />
+    <meta property="og:site_name" content="@Options.SiteName" />
+    <meta property="og:locale" content="@Options.DefaultLocale" />
+    <meta property="og:title" content="@EffectiveTitle" />
+    <meta property="og:description" content="@EffectiveDescription" />
+    <meta property="og:url" content="@CanonicalUrl" />
+    <meta property="og:image" content="@AbsoluteImage" />
+    <meta property="og:image:alt" content="@(ImageAlt ?? EffectiveTitle)" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="@EffectiveTitle" />
+    <meta name="twitter:description" content="@EffectiveDescription" />
+    <meta name="twitter:image" content="@AbsoluteImage" />
+    @if (!string.IsNullOrWhiteSpace(Options.TwitterHandle))
+    {
+        <meta name="twitter:site" content="@Options.TwitterHandle" />
+        <meta name="twitter:creator" content="@Options.TwitterHandle" />
+    }
+</HeadContent>
+
+@code {
+    [Parameter] public string? Title { get; set; }
+    [Parameter] public string? Description { get; set; }
+    [Parameter] public string? RelativeUrl { get; set; }
+    [Parameter] public string? ImageUrl { get; set; }
+    [Parameter] public string? ImageAlt { get; set; }
+    [Parameter] public string OgType { get; set; } = "website";
+    [Parameter] public bool NoIndex { get; set; }
+
+    private SeoOptions Options => SeoOptionsAccessor.Value;
+
+    private string EffectiveTitle =>
+        string.IsNullOrWhiteSpace(Title)
+            ? Options.SiteName
+            : Title.Contains(Options.SiteName, StringComparison.OrdinalIgnoreCase)
+                ? Title!
+                : $"{Title} | {Options.SiteName}";
+
+    private string EffectiveDescription =>
+        string.IsNullOrWhiteSpace(Description) ? Options.DefaultDescription : Description!;
+
+    private string CanonicalUrl => UrlBuilder.CanonicalForCurrentRequest(RelativeUrl);
+
+    private string AbsoluteImage =>
+        UrlBuilder.AbsoluteUrl(string.IsNullOrWhiteSpace(ImageUrl) ? Options.DefaultOgImage : ImageUrl);
+}

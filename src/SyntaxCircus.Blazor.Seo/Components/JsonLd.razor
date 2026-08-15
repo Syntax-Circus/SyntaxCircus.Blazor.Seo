@@ -1,0 +1,28 @@
+@namespace SyntaxCircus.Blazor.Seo.Components
+@using System.Text.Encodings.Web
+@using System.Text.Json
+@using System.Text.Json.Serialization
+
+@if (!string.IsNullOrEmpty(_serialized))
+{
+    <script type="application/ld+json">@((MarkupString)_serialized)</script>
+}
+
+@code {
+    [Parameter, EditorRequired] public object? Data { get; set; }
+
+    private static readonly JsonSerializerOptions SerializerOptions = new()
+    {
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+        Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+        WriteIndented = false,
+    };
+
+    private string? _serialized;
+
+    protected override void OnParametersSet()
+    {
+        _serialized = Data is null ? null : JsonSerializer.Serialize(Data, SerializerOptions);
+    }
+}

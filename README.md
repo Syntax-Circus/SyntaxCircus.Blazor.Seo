@@ -1,6 +1,7 @@
 # SyntaxCircus.Blazor.Seo
 
 [![Build](https://github.com/Syntax-Circus/SyntaxCircus.Blazor.Seo/actions/workflows/build.yml/badge.svg)](https://github.com/Syntax-Circus/SyntaxCircus.Blazor.Seo/actions/workflows/build.yml)
+[![NuGet](https://img.shields.io/nuget/v/SyntaxCircus.Blazor.Seo.svg)](https://www.nuget.org/packages/SyntaxCircus.Blazor.Seo)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE.txt)
 
 SEO building blocks for Blazor Server marketing sites — meta/OG/Twitter tags, typed Schema.org JSON-LD, a canonical URL builder, a generic sitemap.xml/robots.txt endpoint, and canonical-host redirect middleware.

@@ -18,7 +18,7 @@ jobs:
           dotnet-version: 10.0.x
       - run: dotnet restore SyntaxCircus.Blazor.Seo.slnx
       - run: dotnet build SyntaxCircus.Blazor.Seo.slnx --no-restore --configuration Release
-      - run: dotnet test --solution SyntaxCircus.Blazor.Seo.slnx --no-build --configuration Release
+      - run: dotnet test tests/SyntaxCircus.Blazor.Seo.Tests/SyntaxCircus.Blazor.Seo.Tests.csproj --no-build --configuration Release
 
       - name: Pack
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'

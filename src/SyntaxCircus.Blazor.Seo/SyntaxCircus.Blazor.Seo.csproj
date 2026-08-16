@@ -6,9 +6,9 @@
     <PackageId>SyntaxCircus.Blazor.Seo</PackageId>
     <Title>SyntaxCircus Blazor SEO</Title>
     <Description>SEO building blocks for Blazor Server marketing sites: a SeoHead component, typed Schema.org JSON-LD records, a canonical URL builder, a generic sitemap.xml/robots.txt endpoint, and canonical-host redirect middleware.</Description>
-    <Authors>SyntaxCircus</Authors>
-    <Company>SyntaxCircus</Company>
-    <Copyright>Copyright © SyntaxCircus</Copyright>
+    <Authors>Syntax Circus LLC</Authors>
+    <Company>Syntax Circus LLC</Company>
+    <Copyright>Copyright © Syntax Circus LLC</Copyright>
     <PackageTags>blazor;seo;sitemap;schema.org;json-ld</PackageTags>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>

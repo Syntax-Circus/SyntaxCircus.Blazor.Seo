@@ -1,4 +1,4 @@
-namespace SyntaxCircus.Blazor.Seo;
+﻿namespace SyntaxCircus.Blazor.Seo;
 
 public sealed class SeoUrlBuilder(IOptions<SeoOptions> options, IHttpContextAccessor httpContextAccessor) : ISeoUrlBuilder
 {
@@ -9,7 +9,8 @@ public sealed class SeoUrlBuilder(IOptions<SeoOptions> options, IHttpContextAcce
             return TrimTrailingSlash(options.Value.BaseUrl);
         }
 
-        if (Uri.TryCreate(relativeOrAbsolute, UriKind.Absolute, out var absolute))
+        if (Uri.TryCreate(relativeOrAbsolute, UriKind.Absolute, out var absolute)
+            && !absolute.IsFile)
         {
             return absolute.ToString();
         }

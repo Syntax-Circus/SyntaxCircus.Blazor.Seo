@@ -1,4 +1,4 @@
-namespace SyntaxCircus.Blazor.Seo.Tests;
+﻿namespace SyntaxCircus.Blazor.Seo.Tests;
 
 public class SeoUrlBuilderTests
 {
@@ -29,6 +29,14 @@ public class SeoUrlBuilderTests
         var builder = CreateBuilder("https://example.com");
 
         builder.AbsoluteUrl("/page").ShouldBe("https://example.com/page");
+    }
+
+    [Fact]
+    public void AbsoluteUrl_UnixStyleRootedPath_NotTreatedAsAbsoluteFileUri()
+    {
+        var builder = CreateBuilder("https://example.com");
+
+        builder.AbsoluteUrl("/override").ShouldBe("https://example.com/override");
     }
 
     [Fact]

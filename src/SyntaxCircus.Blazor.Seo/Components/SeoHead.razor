@@ -2,6 +2,8 @@
 @inject IOptions<SeoOptions> SeoOptionsAccessor
 @inject ISeoUrlBuilder UrlBuilder
 
+<PageTitle>@EffectiveTitle</PageTitle>
+
 <HeadContent>
     <meta name="description" content="@EffectiveDescription" />
     <link rel="canonical" href="@CanonicalUrl" />
@@ -32,6 +34,14 @@
         <meta name="twitter:site" content="@Options.TwitterHandle" />
         <meta name="twitter:creator" content="@Options.TwitterHandle" />
     }
+
+    @if (StructuredData is not null)
+    {
+        foreach (var data in StructuredData.Where(data => data is not null))
+        {
+            <JsonLd Data="data" />
+        }
+    }
 </HeadContent>
 
 @code {
@@ -40,6 +50,7 @@
     [Parameter] public string? RelativeUrl { get; set; }
     [Parameter] public string? ImageUrl { get; set; }
     [Parameter] public string? ImageAlt { get; set; }
+    [Parameter] public IReadOnlyList<object>? StructuredData { get; set; }
     [Parameter] public string OgType { get; set; } = "website";
     [Parameter] public bool NoIndex { get; set; }
 

@@ -42,11 +42,26 @@ app.MapRobotsTxt();
 ## Per-page meta tags
 
 ```razor
-<SeoHead Title="Pricing" Description="Plans and pricing." RelativeUrl="/pricing" />
-<JsonLd Data="@(new OrganizationSchema(Name: "Acme", Url: "https://acme.example", Logo: "https://acme.example/logo.png"))" />
+<SeoHead
+    Title="Pricing"
+    Description="Plans and pricing."
+    RelativeUrl="/pricing"
+    StructuredData="PageSchemas" />
+
+@code {
+    private IReadOnlyList<object> PageSchemas =>
+    [
+        new OrganizationSchema(
+            Name: "Acme",
+            Url: "https://acme.example",
+            Logo: "https://acme.example/logo.png"),
+        new BreadcrumbListSchema(
+            [new BreadcrumbItem(1, "Home", "https://acme.example/"), new BreadcrumbItem(2, "Pricing", "https://acme.example/pricing")]),
+    ];
+}
 ```
 
-`SeoHead` fills in description, canonical link, robots directives, and Open Graph/Twitter tags from `SeoOptions` plus whatever you override per-page. `JsonLd` serializes any typed schema record from `Schemas.cs` (`OrganizationSchema`, `WebSiteSchema`, `PersonSchema`, `CreativeWorkSchema`, `SoftwareApplicationSchema`, `BookSchema`, `BreadcrumbListSchema`, `FaqPageSchema`) — or your own POCO — as a `<script type="application/ld+json">` block. Use as many `<JsonLd>` instances on one page as you need.
+`SeoHead` sets the document title and fills in description, canonical link, robots directives, and Open Graph/Twitter tags from `SeoOptions` plus whatever you override per-page. Its optional `StructuredData` parameter renders each supplied object as a JSON-LD block in the document head. `JsonLd` remains available when you prefer to place a single schema directly; both accept typed records from `Schemas.cs` (`OrganizationSchema`, `WebSiteSchema`, `PersonSchema`, `CreativeWorkSchema`, `SoftwareApplicationSchema`, `BookSchema`, `BreadcrumbListSchema`, `FaqPageSchema`) or your own POCO.
 
 ## Notes
 

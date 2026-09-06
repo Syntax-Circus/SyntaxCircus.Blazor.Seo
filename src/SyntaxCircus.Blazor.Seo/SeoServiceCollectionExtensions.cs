@@ -2,6 +2,12 @@ namespace SyntaxCircus.Blazor.Seo;
 
 public static class SeoServiceCollectionExtensions
 {
+    /// <summary>
+    /// Registers Blazor.Seo's own services (<see cref="SeoOptions"/>, <see cref="SiteSupportOptions"/>,
+    /// <see cref="ISeoUrlBuilder"/>) plus, via <c>SyntaxCircus.AspNetCore.Common</c>, canonical-host-redirect
+    /// (<c>"CanonicalHost"</c>) and search-indexing header (<c>"SearchIndexing"</c>) configuration — one call
+    /// wires up the whole stack. Pair with <see cref="UseSyntaxCircusSeo"/> in the request pipeline.
+    /// </summary>
     public static IServiceCollection AddSyntaxCircusSeo(this IServiceCollection services, IConfiguration configuration)
     {
         ArgumentNullException.ThrowIfNull(services);
@@ -11,13 +17,22 @@ public static class SeoServiceCollectionExtensions
         services.Configure<SeoOptions>(configuration.GetSection(SeoOptions.SectionName));
         services.Configure<SiteSupportOptions>(configuration.GetSection(SiteSupportOptions.SectionName));
         services.AddScoped<ISeoUrlBuilder, SeoUrlBuilder>();
+        services.AddCanonicalHostRedirect(configuration);
+        services.AddSearchIndexing(configuration);
         return services;
     }
 
-    /// <summary>Redirects non-canonical hosts to <see cref="SeoOptions.BaseUrl"/>'s host. Skips localhost/loopback/*.internal.</summary>
-    public static IApplicationBuilder UseCanonicalHost(this IApplicationBuilder app)
+    /// <summary>
+    /// Applies the canonical-host redirect and search-indexing (<c>X-Robots-Tag</c>) middleware registered by
+    /// <see cref="AddSyntaxCircusSeo"/> — equivalent to calling AspNetCore.Common's
+    /// <c>UseCanonicalHostRedirect()</c> then <c>UseSearchIndexingHeaders()</c> yourself.
+    /// </summary>
+    public static IApplicationBuilder UseSyntaxCircusSeo(this IApplicationBuilder app)
     {
         ArgumentNullException.ThrowIfNull(app);
-        return app.UseMiddleware<CanonicalHostMiddleware>();
+
+        app.UseCanonicalHostRedirect();
+        app.UseSearchIndexingHeaders();
+        return app;
     }
 }

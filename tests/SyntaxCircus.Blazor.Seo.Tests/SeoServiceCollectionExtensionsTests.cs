@@ -43,19 +43,57 @@ public class SeoServiceCollectionExtensionsTests
     }
 
     [Fact]
-    public void UseCanonicalHost_NullApp_ThrowsArgumentNullException()
+    public void AddSyntaxCircusSeo_WiresUpCanonicalHostOptionsFromConfiguration()
     {
-        Should.Throw<ArgumentNullException>(() => SeoServiceCollectionExtensions.UseCanonicalHost(null!));
+        var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string?>
+            {
+                ["CanonicalHost:CanonicalHost"] = "example.com",
+                ["CanonicalHost:LegacyHosts:0"] = "old.example.com",
+            })
+            .Build();
+        var services = new ServiceCollection();
+        services.AddSyntaxCircusSeo(configuration);
+
+        using var provider = services.BuildServiceProvider();
+        var options = provider.GetRequiredService<IOptions<CanonicalHostOptions>>().Value;
+
+        options.CanonicalHost.ShouldBe("example.com");
+        options.LegacyHosts.ShouldContain("old.example.com");
     }
 
     [Fact]
-    public void UseCanonicalHost_ReturnsSameApplicationBuilder()
+    public void AddSyntaxCircusSeo_WiresUpSearchIndexingOptionsFromConfiguration()
+    {
+        var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string?>
+            {
+                ["SearchIndexing:BlockPageMetadata"] = "true",
+            })
+            .Build();
+        var services = new ServiceCollection();
+        services.AddSyntaxCircusSeo(configuration);
+
+        using var provider = services.BuildServiceProvider();
+        var options = provider.GetRequiredService<IOptions<SearchIndexingOptions>>().Value;
+
+        options.BlockPageMetadata.ShouldBeTrue();
+    }
+
+    [Fact]
+    public void UseSyntaxCircusSeo_NullApp_ThrowsArgumentNullException()
+    {
+        Should.Throw<ArgumentNullException>(() => SeoServiceCollectionExtensions.UseSyntaxCircusSeo(null!));
+    }
+
+    [Fact]
+    public void UseSyntaxCircusSeo_ReturnsSameApplicationBuilder()
     {
         var services = new ServiceCollection();
         services.AddSyntaxCircusSeo(EmptyConfiguration());
         var app = new ApplicationBuilder(services.BuildServiceProvider());
 
-        var result = app.UseCanonicalHost();
+        var result = app.UseSyntaxCircusSeo();
 
         result.ShouldBeSameAs(app);
     }

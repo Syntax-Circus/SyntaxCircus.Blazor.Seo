@@ -8,6 +8,7 @@ global using Microsoft.Extensions.DependencyInjection;
 global using Microsoft.Extensions.Options;
 global using NSubstitute;
 global using Shouldly;
+global using SyntaxCircus.AspNetCore.Common;
 global using SyntaxCircus.Blazor.Seo;
 global using SyntaxCircus.Blazor.Seo.Tests.Infrastructure;
 global using Xunit;

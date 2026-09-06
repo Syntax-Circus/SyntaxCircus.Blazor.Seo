@@ -5,7 +5,7 @@
     <Nullable>enable</Nullable>
     <PackageId>SyntaxCircus.Blazor.Seo</PackageId>
     <Title>SyntaxCircus Blazor SEO</Title>
-    <Description>SEO building blocks for Blazor Server marketing sites: a SeoHead component, typed Schema.org JSON-LD records, a canonical URL builder, a generic sitemap.xml/robots.txt endpoint, and canonical-host redirect middleware.</Description>
+    <Description>SEO building blocks for Blazor Server marketing sites: a SeoHead component, typed Schema.org JSON-LD records, a canonical URL builder, and thin sitemap.xml/robots.txt wrappers over SyntaxCircus.AspNetCore.Common.</Description>
     <Authors>Syntax Circus LLC</Authors>
     <Company>Syntax Circus LLC</Company>
     <Copyright>Copyright © Syntax Circus LLC</Copyright>
@@ -23,6 +23,7 @@
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="GitVersion.MsBuild" PrivateAssets="all" />
+    <PackageReference Include="SyntaxCircus.AspNetCore.Common" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\README.md" Pack="true" PackagePath="\" />

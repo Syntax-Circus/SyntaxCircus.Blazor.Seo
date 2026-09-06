@@ -92,6 +92,30 @@ public class SeoEndpointExtensionsTests
         response.StatusCode.ShouldBe(System.Net.HttpStatusCode.NotFound);
     }
 
+    [Fact]
+    public async Task GetSitemap_CacheDuration_SetsCacheControlHeader()
+    {
+        using var server = TestServerFactory.Create(
+            null,
+            endpoints => endpoints.MapSeoSitemap([new SitemapEntry("https://example.com/")], cacheDuration: TimeSpan.FromMinutes(10)));
+        using var client = server.CreateClient();
+
+        var response = await client.GetAsync(new Uri("/sitemap.xml", UriKind.Relative), TestContext.Current.CancellationToken);
+
+        response.Headers.CacheControl!.ToString().ShouldBe("public, max-age=600");
+    }
+
+    [Fact]
+    public async Task GetSitemap_NoCacheDuration_OmitsCacheControlHeader()
+    {
+        using var server = CreateSitemapServer([new SitemapEntry("https://example.com/")]);
+        using var client = server.CreateClient();
+
+        var response = await client.GetAsync(new Uri("/sitemap.xml", UriKind.Relative), TestContext.Current.CancellationToken);
+
+        response.Headers.CacheControl.ShouldBeNull();
+    }
+
     private static TestServer CreateRobotsServer(
         IReadOnlyList<string>? extraDirectives = null,
         Action<IServiceCollection>? extraServices = null)
@@ -169,5 +193,21 @@ public class SeoEndpointExtensionsTests
         var body = await client.GetStringAsync(new Uri("/robots.txt", UriKind.Relative), TestContext.Current.CancellationToken);
 
         body.ShouldBe(SearchIndexingOptions.DisallowAllRobotsTxt);
+    }
+
+    [Fact]
+    public async Task GetRobotsTxt_CacheDuration_SetsCacheControlHeader()
+    {
+        var urlBuilder = Substitute.For<ISeoUrlBuilder>();
+        urlBuilder.AbsoluteUrl("/sitemap.xml").Returns("https://example.com/sitemap.xml");
+
+        using var server = TestServerFactory.Create(
+            services => services.AddSingleton(urlBuilder),
+            endpoints => endpoints.MapSeoRobotsTxt(cacheDuration: TimeSpan.FromMinutes(5)));
+        using var client = server.CreateClient();
+
+        var response = await client.GetAsync(new Uri("/robots.txt", UriKind.Relative), TestContext.Current.CancellationToken);
+
+        response.Headers.CacheControl!.ToString().ShouldBe("public, max-age=300");
     }
 }

@@ -71,7 +71,8 @@ app.MapSeoRobotsTxt();
 
 ## Notes
 
-- `MapSeoSitemap`/`MapSeoRobotsTxt` don't assume output caching is configured — if your app has `AddOutputCache()`/`UseOutputCache()` set up, chain `.CacheOutput(...)` onto the returned endpoint builder yourself.
+- `MapSeoSitemap`/`MapSeoRobotsTxt` return `IEndpointRouteBuilder` — the same builder you called them on, passed straight through from AspNetCore.Common's `MapSitemap`/`MapRobotsTxt`, **not** a per-route `IEndpointConventionBuilder`. Nothing can be chained onto the result (no `.CacheOutput(...)`, `.WithName(...)`, etc.) — that per-route builder isn't exposed by AspNetCore.Common's API. Pass the `cacheDuration` parameter instead to set a `Cache-Control: public, max-age=...` response header directly, e.g. `app.MapSeoSitemap(entries, cacheDuration: TimeSpan.FromHours(1))`.
+- Neither endpoint is registered under a route name (no `LinkGenerator`/`Url.RouteUrl(...)` support) — the previous versions' `.WithName("SyntaxCircusSitemap")`/`.WithName("SyntaxCircusRobotsTxt")` calls had nowhere to attach once mapping moved into AspNetCore.Common. Reference `/sitemap.xml`/`/robots.txt` by literal path if you need to link to them.
 - `ISeoUrlBuilder` (injectable) resolves relative URLs against `Seo:BaseUrl` and can compute the canonical URL for the current request. `MapSeoRobotsTxt` uses it to auto-append the `Sitemap:` line.
 - `SearchIndexing:BlockRobotsAndSitemap` (AspNetCore.Common) makes `MapSeoRobotsTxt` return a deny-all body and `MapSeoSitemap` return 404 — a single kill-switch for taking a site out of search indexing.
 

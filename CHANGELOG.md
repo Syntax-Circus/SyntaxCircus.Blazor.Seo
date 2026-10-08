@@ -3,7 +3,15 @@
 All notable changes to this project are documented here. Format loosely follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
-## Unreleased
+## 0.1.5
+
+### Changed
+
+- `ISeoUrlBuilder` is registered with `TryAddScoped`, so a consumer's own registration wins regardless of order
+  (before or after `AddSyntaxCircusSeo`). See the multi-host note in the README.
+- `SyntaxCircus.AspNetCore.Common` floor raised to 0.1.16.
+
+## 0.1.4
 
 ### BREAKING CHANGES
 

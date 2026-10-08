@@ -1,3 +1,5 @@
+using Microsoft.Extensions.DependencyInjection.Extensions;
+
 namespace SyntaxCircus.Blazor.Seo;
 
 public static class SeoServiceCollectionExtensions
@@ -6,7 +8,8 @@ public static class SeoServiceCollectionExtensions
     /// Registers Blazor.Seo's own services (<see cref="SeoOptions"/>, <see cref="SiteSupportOptions"/>,
     /// <see cref="ISeoUrlBuilder"/>) plus, via <c>SyntaxCircus.AspNetCore.Common</c>, canonical-host-redirect
     /// (<c>"CanonicalHost"</c>) and search-indexing header (<c>"SearchIndexing"</c>) configuration — one call
-    /// wires up the whole stack. Pair with <see cref="UseSyntaxCircusSeo"/> in the request pipeline.
+    /// wires up the whole stack. <see cref="ISeoUrlBuilder"/> is registered with <c>TryAddScoped</c>, so a consumer's
+    /// own <see cref="ISeoUrlBuilder"/> registration (before or after this call) is kept. Pair with <see cref="UseSyntaxCircusSeo"/> in the request pipeline.
     /// </summary>
     public static IServiceCollection AddSyntaxCircusSeo(this IServiceCollection services, IConfiguration configuration)
     {
@@ -16,7 +19,7 @@ public static class SeoServiceCollectionExtensions
         services.AddHttpContextAccessor();
         services.Configure<SeoOptions>(configuration.GetSection(SeoOptions.SectionName));
         services.Configure<SiteSupportOptions>(configuration.GetSection(SiteSupportOptions.SectionName));
-        services.AddScoped<ISeoUrlBuilder, SeoUrlBuilder>();
+        services.TryAddScoped<ISeoUrlBuilder, SeoUrlBuilder>();
         services.AddCanonicalHostRedirect(configuration);
         services.AddSearchIndexing(configuration);
         return services;

@@ -43,6 +43,32 @@ public class SeoServiceCollectionExtensionsTests
     }
 
     [Fact]
+    public void AddSyntaxCircusSeo_KeepsBuilderRegisteredBeforeIt_ResolvesConsumerBuilder()
+    {
+        var stub = Substitute.For<ISeoUrlBuilder>();
+        var services = new ServiceCollection();
+        services.AddScoped(_ => stub);
+        services.AddSyntaxCircusSeo(EmptyConfiguration());
+
+        using var scope = services.BuildServiceProvider().CreateScope();
+
+        scope.ServiceProvider.GetRequiredService<ISeoUrlBuilder>().ShouldBeSameAs(stub);
+    }
+
+    [Fact]
+    public void AddSyntaxCircusSeo_KeepsBuilderRegisteredAfterIt_ResolvesConsumerBuilder()
+    {
+        var stub = Substitute.For<ISeoUrlBuilder>();
+        var services = new ServiceCollection();
+        services.AddSyntaxCircusSeo(EmptyConfiguration());
+        services.AddScoped(_ => stub);
+
+        using var scope = services.BuildServiceProvider().CreateScope();
+
+        scope.ServiceProvider.GetRequiredService<ISeoUrlBuilder>().ShouldBeSameAs(stub);
+    }
+
+    [Fact]
     public void AddSyntaxCircusSeo_WiresUpCanonicalHostOptionsFromConfiguration()
     {
         var configuration = new ConfigurationBuilder()

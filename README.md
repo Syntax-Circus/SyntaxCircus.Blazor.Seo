@@ -73,8 +73,12 @@ app.MapSeoRobotsTxt();
 
 - `MapSeoSitemap`/`MapSeoRobotsTxt` return `IEndpointRouteBuilder` — the same builder you called them on, passed straight through from AspNetCore.Common's `MapSitemap`/`MapRobotsTxt`, **not** a per-route `IEndpointConventionBuilder`. Nothing can be chained onto the result (no `.CacheOutput(...)`, `.WithName(...)`, etc.) — that per-route builder isn't exposed by AspNetCore.Common's API. Pass the `cacheDuration` parameter instead to set a `Cache-Control: public, max-age=...` response header directly, e.g. `app.MapSeoSitemap(entries, cacheDuration: TimeSpan.FromHours(1))`.
 - Neither endpoint is registered under a route name (no `LinkGenerator`/`Url.RouteUrl(...)` support) — the previous versions' `.WithName("SyntaxCircusSitemap")`/`.WithName("SyntaxCircusRobotsTxt")` calls had nowhere to attach once mapping moved into AspNetCore.Common. Reference `/sitemap.xml`/`/robots.txt` by literal path if you need to link to them.
-- `ISeoUrlBuilder` (injectable) resolves relative URLs against `Seo:BaseUrl` and can compute the canonical URL for the current request. `MapSeoRobotsTxt` uses it to auto-append the `Sitemap:` line.
+- `ISeoUrlBuilder` (injectable) resolves relative URLs against `Seo:BaseUrl` and can compute the canonical URL for the current request. `MapSeoRobotsTxt` uses it to auto-append the `Sitemap:` line. Register your own `ISeoUrlBuilder` to replace it; see Multi-host sites below.
 - `SearchIndexing:BlockRobotsAndSitemap` (AspNetCore.Common) makes `MapSeoRobotsTxt` return a deny-all body and `MapSeoSitemap` return 404 — a single kill-switch for taking a site out of search indexing.
+
+### Multi-host sites
+
+`Seo:BaseUrl` is a single value. A site that serves several hostnames registers its own scoped `ISeoUrlBuilder` (typically wrapping `SeoUrlBuilder`, which is public), either before or after `AddSyntaxCircusSeo`. Since 0.1.5 the package registers its builder with `TryAddScoped`, so your registration wins in either order. `MapSeoRobotsTxt`'s `Sitemap:` line and `SeoHead`'s canonical URL and OG image then follow your builder. Resolve the host from the application's own data (for example the configured host-to-product mapping), never from the raw `Host` header.
 
 ## Contributing
 

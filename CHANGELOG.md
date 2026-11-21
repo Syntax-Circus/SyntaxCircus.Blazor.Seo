@@ -3,6 +3,19 @@
 All notable changes to this project are documented here. Format loosely follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## Unreleased (0.1.6)
+
+### Security
+
+- Fixed JSON-LD script breakout in `JsonLd` and `SeoHead` `StructuredData`. String values (titles, descriptions, names) containing
+  `</script>` could close the `<script type="application/ld+json">` element and have the remainder parsed as HTML (XSS), or
+  simply break the page. `<`, `>`, `&`, U+2028 and U+2029 are now emitted as `\u003c`, `\u003e`, `\u0026`, `\u2028` and `\u2029`; the
+  output is still valid JSON and parses back to the original text.
+
+### Added
+
+- `JsonLdSerializer.Serialize(object)`: the public helper used by `JsonLd`, for consumers that emit JSON-LD themselves.
+
 ## 0.1.5
 
 ### Changed

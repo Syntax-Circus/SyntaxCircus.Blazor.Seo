@@ -3,7 +3,13 @@
 All notable changes to this project are documented here. Format loosely follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
-## Unreleased (0.1.7)
+## Unreleased (0.1.8)
+
+### Added
+
+- `OrganizationSchema.SubOrganization` and `OrganizationSchema.ParentOrganization` (schema.org `subOrganization` / `parentOrganization`), appended as optional trailing parameters so existing positional callers keep compiling. Use these, not `SameAs`, to express parent/child brands: `sameAs` means "the same entity" (official profiles such as GitHub or LinkedIn), not "an organisation we own".
+
+## 0.1.7
 
 ### Added
 

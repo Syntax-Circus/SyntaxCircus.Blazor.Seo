@@ -35,6 +35,8 @@
         <meta name="twitter:creator" content="@Options.TwitterHandle" />
     }
 
+    @ChildContent
+
     @if (StructuredData is not null)
     {
         foreach (var data in StructuredData.Where(data => data is not null))
@@ -53,6 +55,13 @@
     [Parameter] public IReadOnlyList<object>? StructuredData { get; set; }
     [Parameter] public string OgType { get; set; } = "website";
     [Parameter] public bool NoIndex { get; set; }
+
+    /// <summary>
+    /// Extra head tags (for example <c>article:published_time</c> metas) rendered inside SeoHead's single
+    /// <c>HeadContent</c>, after the Open Graph/Twitter tags and before the JSON-LD blocks. Blazor's <c>HeadContent</c>
+    /// is last-wins, so a second <c>HeadContent</c> on the same page would replace SeoHead's tags instead of adding to them.
+    /// </summary>
+    [Parameter] public RenderFragment? ChildContent { get; set; }
 
     private SeoOptions Options => SeoOptionsAccessor.Value;
 

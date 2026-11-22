@@ -3,7 +3,13 @@
 All notable changes to this project are documented here. Format loosely follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
-## Unreleased (0.1.6)
+## Unreleased (0.1.7)
+
+### Added
+
+- `SeoHead.ChildContent`: extra head tags (for example `article:published_time` metas) now render inside `SeoHead`'s single `HeadContent`, after the Open Graph/Twitter tags and before the JSON-LD blocks. Blazor `HeadContent` is last-wins, so a page could not add its own head tags next to `<SeoHead>` without a second `HeadContent` replacing (or losing to) SeoHead's; consumers had to copy SeoHead's whole tag list. Output is unchanged when no child content is supplied.
+
+## 0.1.6
 
 ### Security
 

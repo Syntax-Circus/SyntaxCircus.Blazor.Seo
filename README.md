@@ -69,6 +69,17 @@ app.MapSeoRobotsTxt();
 
 `SeoHead` sets the document title and fills in description, canonical link, robots directives, and Open Graph/Twitter tags from `SeoOptions` plus whatever you override per-page. Its optional `StructuredData` parameter renders each supplied object as a JSON-LD block in the document head. `JsonLd` remains available when you prefer to place a single schema directly; both accept typed records from `Schemas.cs` (`OrganizationSchema`, `WebSiteSchema`, `PersonSchema`, `CreativeWorkSchema`, `SoftwareApplicationSchema`, `BookSchema`, `BreadcrumbListSchema`, `FaqPageSchema`) or your own POCO. JSON-LD values are escaped so they cannot close the script element (`<`, `>`, `&`, U+2028 and U+2029 become `\uXXXX` escapes, and the JSON still parses back to the original text). If you emit JSON-LD yourself, use `JsonLdSerializer.Serialize(object)` to get the same safe output.
 
+To add extra head tags such as article metas, pass them as child content:
+
+```razor
+<SeoHead Title="@post.Title" OgType="article" RelativeUrl="@post.Path">
+    <meta property="article:published_time" content="@post.PublishedAt.ToString("O")" />
+    <meta property="article:tag" content="dotnet" />
+</SeoHead>
+```
+
+Use child content rather than a second `HeadContent` on the page: Blazor `HeadContent` is last-wins, so another `HeadContent` would replace `SeoHead`'s tags instead of adding to them. Child content renders after the Open Graph/Twitter tags and before the JSON-LD blocks.
+
 ## Notes
 
 - `MapSeoSitemap`/`MapSeoRobotsTxt` return `IEndpointRouteBuilder` — the same builder you called them on, passed straight through from AspNetCore.Common's `MapSitemap`/`MapRobotsTxt`, **not** a per-route `IEndpointConventionBuilder`. Nothing can be chained onto the result (no `.CacheOutput(...)`, `.WithName(...)`, etc.) — that per-route builder isn't exposed by AspNetCore.Common's API. Pass the `cacheDuration` parameter instead to set a `Cache-Control: public, max-age=...` response header directly, e.g. `app.MapSeoSitemap(entries, cacheDuration: TimeSpan.FromHours(1))`.

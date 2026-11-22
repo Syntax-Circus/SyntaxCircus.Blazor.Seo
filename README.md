@@ -67,6 +67,20 @@ app.MapSeoRobotsTxt();
 }
 ```
 
+To express a parent/child brand relationship, list the brands on the parent's schema with `SubOrganization` and point each product site back with `ParentOrganization`:
+
+```csharp
+// Parent site
+new OrganizationSchema("Syntax Circus", "https://www.syntaxcircus.com/", "https://www.syntaxcircus.com/logo.png",
+    SubOrganization: [new OrganizationReference("Organization", "Core Musica", "https://www.coremusica.com")]);
+
+// Product site
+new OrganizationSchema("Core Musica", "https://www.coremusica.com", "https://www.coremusica.com/logo.png",
+    ParentOrganization: new OrganizationReference("Organization", "Syntax Circus", "https://www.syntaxcircus.com/"));
+```
+
+Use `SameAs` only for profiles of the same entity (GitHub, LinkedIn), never for a related organisation.
+
 `SeoHead` sets the document title and fills in description, canonical link, robots directives, and Open Graph/Twitter tags from `SeoOptions` plus whatever you override per-page. Its optional `StructuredData` parameter renders each supplied object as a JSON-LD block in the document head. `JsonLd` remains available when you prefer to place a single schema directly; both accept typed records from `Schemas.cs` (`OrganizationSchema`, `WebSiteSchema`, `PersonSchema`, `CreativeWorkSchema`, `SoftwareApplicationSchema`, `BookSchema`, `BreadcrumbListSchema`, `FaqPageSchema`) or your own POCO. JSON-LD values are escaped so they cannot close the script element (`<`, `>`, `&`, U+2028 and U+2029 become `\uXXXX` escapes, and the JSON still parses back to the original text). If you emit JSON-LD yourself, use `JsonLdSerializer.Serialize(object)` to get the same safe output.
 
 To add extra head tags such as article metas, pass them as child content:

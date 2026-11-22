@@ -20,7 +20,9 @@ public sealed record OrganizationSchema(
     string Logo,
     IReadOnlyList<string>? SameAs = null,
     PersonReference? Founder = null,
-    string Description = "")
+    string Description = "",
+    IReadOnlyList<OrganizationReference>? SubOrganization = null,
+    OrganizationReference? ParentOrganization = null)
     : SchemaBase(Type: "Organization");
 
 public sealed record PersonReference(

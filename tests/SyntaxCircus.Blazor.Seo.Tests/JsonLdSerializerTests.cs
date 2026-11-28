@@ -85,7 +85,8 @@ public class JsonLdSerializerTests
     {
         CountOf(html, "<script").ShouldBe(1, html);
         CountOf(html, "</script>").ShouldBe(1, html);
-        html.ShouldContain("<script type=\"application/ld");
+        // Literal, not "application/ld&#x2B;json": crawlers that match the raw text miss the encoded form.
+        html.ShouldContain("<script type=\"application/ld+json\">");
         html.ShouldNotContain("</script><script>");
         var start = html.IndexOf('>', html.IndexOf("<script", StringComparison.Ordinal)) + 1;
         var end = html.IndexOf("</script>", start, StringComparison.Ordinal);

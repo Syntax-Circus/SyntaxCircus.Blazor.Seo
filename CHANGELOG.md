@@ -3,7 +3,14 @@
 All notable changes to this project are documented here. Format loosely follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
-## Unreleased (0.1.8)
+## Unreleased (0.1.9)
+
+### Fixed
+
+- `JsonLd` (and `SeoHead` `StructuredData`) now render the literal `type="application/ld+json"` on server-rendered pages. The `+` was
+  HTML-encoded as `&#x2B;`, which browsers accept but some SEO crawlers do not recognise as JSON-LD.
+
+## 0.1.8
 
 ### Added
 

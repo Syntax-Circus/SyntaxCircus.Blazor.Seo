@@ -1,8 +1,13 @@
 @namespace SyntaxCircus.Blazor.Seo.Components
 
+@*
+    The whole element is one MarkupString: a literal type attribute in Razor is HTML-encoded by the static
+    renderer ("application/ld&#x2B;json"). Browsers decode that, but crawlers that match the raw text do not.
+    JsonLdSerializer escapes "<", so the payload cannot close the element.
+*@
 @if (!string.IsNullOrEmpty(_serialized))
 {
-    <script type="application/ld+json">@((MarkupString)_serialized)</script>
+    @((MarkupString)$"<script type=\"application/ld+json\">{_serialized}</script>")
 }
 
 @code {
